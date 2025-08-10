@@ -1,0 +1,59 @@
+# 数据集目录
+dataset/
+data/
+*.jsonl
+*.json
+*.csv
+*.txt
+!requirements*.txt
+
+# 模型文件
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+saves/
+models/
+checkpoints/
+
+# 训练输出
+results*/
+logs/
+runs/
+sft/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb
+
+# 环境
+.env
+.venv
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# 缓存
+.cache/
+.transformers_cache/
+
+# 临时文件
+*.tmp
+*.log
+*.bak
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 训练状态
+trainer_state*.json

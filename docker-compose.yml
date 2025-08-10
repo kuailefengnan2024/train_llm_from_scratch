@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  train:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # 智能GPU适配：A100用新镜像，40系列用默认
+        BASE_IMAGE: ${BASE_IMAGE:-nvcr.io/nvidia/pytorch:23.09-py3}
+    container_name: train_llm
+    runtime: nvidia
+    
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - CUDA_VISIBLE_DEVICES=${CUDA_DEVICES:-0}
+      - HF_HOME=/workspace/.cache/huggingface
+      - OMP_NUM_THREADS=${OMP_THREADS:-8}
+    
+    volumes:
+      - ./:/workspace/train_llm_from_scratch
+      - ./data:/workspace/train_llm_from_scratch/data
+      - ./saves:/workspace/train_llm_from_scratch/saves
+      - huggingface-cache:/workspace/.cache/huggingface
+      - pip-cache:/pip-cache
+    
+    ports:
+      - "${TB_PORT:-6006}:6006"
+      - "${JUPYTER_PORT:-8888}:8888"
+    
+    working_dir: /workspace/train_llm_from_scratch
+    stdin_open: true
+    tty: true
+    
+    # 智能内存配置：A100用更大内存
+    shm_size: ${SHM_SIZE:-16gb}
+    ulimits:
+      memlock: -1
+      stack: 67108864
+    
+    command: /bin/bash
+
+volumes:
+  huggingface-cache:
+  pip-cache:
