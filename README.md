@@ -2,16 +2,38 @@
 
 ## 🚀 一键启动
 
+### 前置要求
+- 安装Docker和Docker Compose
+- 安装NVIDIA Container Toolkit（GPU训练必需）
+- 准备数据集文件到 `dataset/` 目录
+
+### 快速开始
 ```bash
-# 自动检测GPU并构建
+# 1. 克隆项目
+git clone <your-repo-url>
+cd train_llm_from_scratch
+
+# 2. 准备数据集
+mkdir -p dataset
+# 将训练数据放入dataset目录
+
+# 3. 自动检测GPU并构建环境
 ./build.sh
 
-# 启动训练环境  
+# 4. 启动训练容器（后台运行）
 docker-compose up -d train
 
-# 进入容器开始训练
+# 5. 进入容器开始训练
 docker-compose exec train bash
 python train.py
+```
+
+### VSCode开发
+```bash
+# 安装VSCode插件：Dev Containers
+# 启动容器后，VSCode中：
+# Ctrl+Shift+P → "Dev Containers: Attach to Running Container"
+# 选择 "train_llm" 容器即可在容器内开发
 ```
 
 ## 📋 项目特性
@@ -61,23 +83,66 @@ docker-compose up -d train
 └── requirements.txt  # Python依赖
 ```
 
-## 🛠️ 故障排除
+## 🛠️ Docker常用命令
 
+### 容器管理
 ```bash
-# 查看GPU状态
-nvidia-smi
+# 查看容器状态
+docker-compose ps
+
+# 启动容器
+docker-compose up -d train
+
+# 停止容器
+docker-compose down
+
+# 进入运行中的容器
+docker-compose exec train bash
 
 # 查看容器日志
-docker-compose logs train
+docker-compose logs -f train
+```
 
+### 构建和清理
+```bash
 # 重新构建镜像
+./build.sh
+# 或
 docker-compose build --no-cache
 
-# 清理缓存
+# 查看镜像大小
+docker images
+
+# 清理Docker缓存
 docker system prune -f
+
+# 清理所有未使用的资源
+docker system prune -a
+```
+
+## 🛠️ 故障排除
+
+### GPU相关
+```bash
+# 主机GPU检查
+nvidia-smi
+
+# 容器内GPU检查
+docker-compose exec train nvidia-smi
+
+# 测试PyTorch GPU
+docker-compose exec train python -c "import torch; print(torch.cuda.is_available())"
+```
+
+### 网络问题
+```bash
+# 如果Docker Hub连接慢，已配置国内镜像加速
+# 检查镜像源配置
+cat /etc/docker/daemon.json
 ```
 
 ## 📈 监控训练
 
 - **TensorBoard**: http://localhost:6006
 - **实时日志**: `docker-compose logs -f train`
+- **GPU监控**: `watch -n 1 nvidia-smi`
