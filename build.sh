@@ -1,5 +1,6 @@
 #!/bin/bash
 # 一键智能构建脚本 - 自动适配GPU类型
+set -e
 
 GPU_TYPE=${1:-auto}
 

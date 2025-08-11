@@ -23,11 +23,10 @@ RUN apt-get update && apt-get install -y \
 # 优化依赖安装 - 大文件优先，利用Docker缓存
 COPY requirements.txt .
 # 简化安装，避免缓存挂载问题
-RUN pip install --index-url https://pypi.tuna.tsinghua.edu.cn/simple/ --no-cache-dir \
-    torch torchvision torchaudio && \
-    pip install --index-url https://pypi.tuna.tsinghua.edu.cn/simple/ --no-cache-dir \
-    transformers datasets accelerate && \
-    pip install --index-url https://pypi.tuna.tsinghua.edu.cn/simple/ --no-cache-dir \
+RUN python3 -m pip install --upgrade pip
+RUN python3 -m pip install --no-cache-dir --no-compile \
+    torch torchvision torchaudio \
+    transformers datasets accelerate \
     -r requirements.txt
 
 # 创建非root用户
